@@ -1,0 +1,7 @@
+_backup_before_fix
+Claude outputs
+*.pdf
+**/node_modules
+client/dist
+**/.env
+**/.env.*

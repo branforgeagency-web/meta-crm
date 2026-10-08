@@ -1,0 +1,9 @@
+{
+  "name": "meta-crm",
+  "private": true,
+  "description": "Meta Ads Lead Management CRM (client + server)",
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "mongoose": "^8.3.1"
+  }
+}

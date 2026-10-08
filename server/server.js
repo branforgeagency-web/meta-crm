@@ -13,8 +13,22 @@ const User = require('./models/User');
 const app = express();
 const server = http.createServer(app);
 
+// CLIENT_ORIGIN may list several origins, comma-separated. Trailing slashes are ignored,
+// and Vercel preview URLs of the same project (*-branforgeagency-*.vercel.app) are allowed.
+const allowedOrigins = (process.env.CLIENT_ORIGIN || '')
+  .split(',')
+  .map((o) => o.trim().replace(/\/+$/, ''))
+  .filter(Boolean);
+const corsOrigin = (origin, cb) => {
+  if (!origin || !allowedOrigins.length) return cb(null, true); // server-to-server (Meta webhook) or unrestricted
+  if (allowedOrigins.includes(origin)) return cb(null, true);
+  if (/^https:\/\/[a-z0-9-]*branforgeagency[a-z0-9-]*\.vercel\.app$/.test(origin)) return cb(null, true);
+  console.warn(`[CORS]: blocked origin ${origin}`);
+  return cb(null, false);
+};
+
 const io = new Server(server, {
-  cors: { origin: process.env.CLIENT_ORIGIN || '*', methods: ['GET', 'POST'] },
+  cors: { origin: corsOrigin, methods: ['GET', 'POST'] },
 });
 
 // Only logged-in, active CRM users may receive real-time lead data.
@@ -43,7 +57,7 @@ io.on('connection', (socket) => {
 // Controllers broadcast with req.app.get('socketio') -> only to authenticated sockets.
 app.set('socketio', io.to('crm'));
 
-app.use(cors({ origin: process.env.CLIENT_ORIGIN || '*' }));
+app.use(cors({ origin: corsOrigin }));
 // Keep the raw body so Meta webhook signatures (X-Hub-Signature-256) can be verified.
 app.use(
   express.json({

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { metaService } from '../services/api';
+import { metaService, BACKEND_URL } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { Settings, Facebook, Key, Shield, Copy, Check, Terminal, ExternalLink } from 'lucide-react';
 
@@ -18,7 +18,7 @@ const SettingsPage = () => {
       .catch((err) => setConfigError(err.response?.data?.message || 'Could not load integration settings'));
   }, [isAdmin]);
 
-  const webhookUrl = `${window.location.origin}${config?.webhookPath || '/api/meta/webhook'}`;
+  const webhookUrl = `${BACKEND_URL || window.location.origin}${config?.webhookPath || '/api/meta/webhook'}`;
   const verifyToken = config?.verifyToken || '';
 
   const StatusRow = ({ ok, label, hint }) => (

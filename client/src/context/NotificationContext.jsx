@@ -31,7 +31,7 @@ export const NotificationProvider = ({ children }) => {
     }
 
     // Socket requires the logged-in user's token; the server rejects anonymous connections.
-    const socketInstance = io(import.meta.env.VITE_SOCKET_URL || window.location.origin, {
+    const socketInstance = io(import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || window.location.origin, {
       auth: { token },
       timeout: 10000,
     });

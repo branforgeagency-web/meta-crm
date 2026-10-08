@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_BASE_URL = '/api';
+// On Vercel the backend runs on Render: set VITE_API_URL=https://<your-render-app>.onrender.com
+export const BACKEND_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+const API_BASE_URL = `${BACKEND_URL}/api`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
